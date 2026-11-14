@@ -43,14 +43,16 @@ export default async function PublishPage() {
     );
   }
 
-  // Phase 6 delivers the full publishing wizard; signed-in developers land here.
   return (
-    <div className="stack" style={{ marginTop: 32 }}>
+    <div className="stack" style={{ marginTop: 32, maxWidth: 520 }}>
       <h1 className="section-title">Developer publishing</h1>
-      <EmptyState
-        title="Publishing portal in progress"
-        body="You're signed in. The full submission wizard (details, media, files, versioning, moderation tracking) ships in Phase 6 of the build plan."
-      />
+      <p style={{ color: "var(--text-muted)" }}>
+        Publish a new product, or manage the ones you already have.
+      </p>
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+        <Link className="btn btn-gold" href="/publish/new">Publish new product</Link>
+        <Link className="btn btn-ghost" href="/dashboard/developer">My products</Link>
+      </div>
     </div>
   );
 }
