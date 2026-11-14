@@ -1,0 +1,495 @@
+/* ============================================================
+   ArtisTech.Store brand system
+   Palette derived from the official ArtisTech logo:
+   near-black base, bronze-gold accents.
+   Light + dark via [data-theme]; falls back to OS preference.
+   ============================================================ */
+
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-brand: Georgia, "Times New Roman", serif;
+
+  --gold-1: #8c6a1f;
+  --gold-2: #e6c15c;
+  --gold-3: #f6df9e;
+  --bronze: #b8860b;
+  --blue: #4ea1ff;
+  --danger: #e0533d;
+  --ok: #2e7d5b;
+
+  --grad-gold: linear-gradient(
+    135deg,
+    #8c6a1f 0%,
+    #e6c15c 45%,
+    #f6df9e 60%,
+    #b8860b 100%
+  );
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+}
+
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b0a08;
+  --surface: #15120c;
+  --card: #1c1710;
+  --card-2: #241d12;
+  --line: rgba(230, 193, 92, 0.14);
+  --line-strong: rgba(230, 193, 92, 0.3);
+  --text: #f5efe3;
+  --text-muted: #a99c84;
+  --text-faint: #6e6350;
+  --accent: var(--gold-2);
+  --accent-ink: #1a1305;
+  --topbar: rgba(11, 10, 8, 0.92);
+  --shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f7f3ea;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --card-2: #f3eddf;
+  --line: rgba(140, 106, 31, 0.18);
+  --line-strong: rgba(140, 106, 31, 0.38);
+  --text: #201809;
+  --text-muted: #6e6350;
+  --text-faint: #9a8e77;
+  --accent: var(--gold-1);
+  --accent-ink: #fff7e0;
+  --topbar: rgba(247, 243, 234, 0.94);
+  --shadow: 0 8px 28px rgba(80, 60, 10, 0.18);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    color-scheme: light;
+    --bg: #f7f3ea;
+    --surface: #ffffff;
+    --card: #ffffff;
+    --card-2: #f3eddf;
+    --line: rgba(140, 106, 31, 0.18);
+    --line-strong: rgba(140, 106, 31, 0.38);
+    --text: #201809;
+    --text-muted: #6e6350;
+    --text-faint: #9a8e77;
+    --accent: var(--gold-1);
+    --accent-ink: #fff7e0;
+    --topbar: rgba(247, 243, 234, 0.94);
+    --shadow: 0 8px 28px rgba(80, 60, 10, 0.18);
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+img {
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- layout primitives ---------- */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ---------- header ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--topbar);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.site-header-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  height: 64px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-brand);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text);
+}
+.brand:hover {
+  text-decoration: none;
+}
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  border: 1px solid var(--line-strong);
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+.brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.brand .brand-stores {
+  color: var(--accent);
+}
+.main-nav {
+  display: none;
+  gap: var(--space-6);
+  margin-left: var(--space-6);
+}
+.main-nav a {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.925rem;
+}
+.main-nav a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+.header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+@media (min-width: 820px) {
+  .main-nav {
+    display: flex;
+  }
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 12px;
+  padding: 11px 20px;
+  font-size: 0.925rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.2s ease;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn-gold {
+  background: var(--grad-gold);
+  color: #1a1305;
+  box-shadow: 0 4px 14px rgba(184, 134, 11, 0.35);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--line-strong);
+}
+.btn-ghost:hover {
+  text-decoration: none;
+  border-color: var(--accent);
+}
+
+/* ---------- hero ---------- */
+.hero {
+  margin: var(--space-6) 0 var(--space-8);
+  border-radius: var(--radius-lg);
+  padding: 2px;
+  background: var(--grad-gold);
+}
+.hero-inner {
+  border-radius: calc(var(--radius-lg) - 2px);
+  background: radial-gradient(
+      120% 140% at 85% -10%,
+      rgba(230, 193, 92, 0.16),
+      transparent 55%
+    ),
+    linear-gradient(160deg, #241c0e, #141109 70%);
+  color: #f5efe3;
+  padding: clamp(28px, 6vw, 56px);
+}
+.hero-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 2.2px;
+  text-transform: uppercase;
+  color: #e6c15c;
+  font-weight: 700;
+}
+.hero h1 {
+  font-family: var(--font-brand);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.12;
+  margin: 12px 0;
+}
+.hero p {
+  color: #a99c84;
+  max-width: 520px;
+  font-size: 1.02rem;
+}
+.hero-cta {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  flex-wrap: wrap;
+}
+.hero-cta .btn-ghost {
+  color: #e6c15c;
+  border-color: rgba(230, 193, 92, 0.4);
+}
+
+/* ---------- sections & cards ---------- */
+.section {
+  margin-bottom: var(--space-8);
+}
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+.section-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: var(--space-4);
+}
+
+.product-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  transition: border-color 0.2s ease, transform 0.15s ease;
+}
+.product-card:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+.product-card-head {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+.product-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  background: var(--card-2);
+  flex: 0 0 auto;
+}
+.product-name {
+  font-weight: 700;
+  color: var(--text);
+  font-size: 0.98rem;
+  line-height: 1.25;
+}
+.product-dev {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.product-tagline {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.product-meta {
+  display: flex;
+  gap: var(--space-2);
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  font-weight: 700;
+}
+
+/* ---------- empty / loading states ---------- */
+.empty-state {
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-md);
+  padding: var(--space-8) var(--space-6);
+  text-align: center;
+  color: var(--text-faint);
+}
+.empty-state strong {
+  display: block;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  font-size: 0.98rem;
+}
+.empty-state p {
+  font-size: 0.85rem;
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: var(--space-4);
+}
+.skeleton-card {
+  height: 132px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    100deg,
+    var(--card) 40%,
+    var(--card-2) 50%,
+    var(--card) 60%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ---------- footer ---------- */
+.site-footer {
+  border-top: 1px solid var(--line);
+  margin-top: var(--space-12);
+  padding: var(--space-8) 0;
+  color: var(--text-faint);
+  font-size: 0.85rem;
+}
+.site-footer .foot-brand {
+  font-family: var(--font-brand);
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+/* ---------- theme toggle ---------- */
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--text-muted);
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.theme-toggle:hover {
+  color: var(--accent);
+  border-color: var(--line-strong);
+}
+
+/* ---------- splash (first paint) ---------- */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+.splash-logo {
+  width: 104px;
+  height: 104px;
+  border-radius: 26px;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 0 44px rgba(230, 193, 92, 0.3);
+}
+.splash-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.splash-name {
+  font-family: var(--font-brand);
+  font-size: 1.6rem;
+  letter-spacing: 3px;
+  font-weight: 700;
+}
+.splash-name span {
+  color: var(--accent);
+}
+.splash-tag {
+  font-size: 0.72rem;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
