@@ -361,7 +361,11 @@ alter table advertisements        enable row level security;
 alter table audit_logs            enable row level security;
 
 -- profiles: public read of basic fields; owner edits own row; admin manages all
-create policy profiles_read on profiles for select using (true);
+create policy profiles_read on profiles for select
+  using (id = auth.uid() or is_admin(auth.uid()));
+
+-- Review author names stay public through a column-limited view.
+create or replace view public_profiles as select id, username, display_name from profiles;
 -- owner edits own profile but cannot escalate role or self-unsuspend
   create policy profiles_update_own on profiles for update
   using (auth.uid() = id)

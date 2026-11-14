@@ -74,7 +74,7 @@ export default async function ProductPage({ params }: Params) {
 
   const { data: reviews } = await supabase
     .from("reviews")
-    .select("id, rating, body, is_verified_download, created_at, profiles(username, display_name)")
+    .select("id, rating, body, is_verified_download, created_at, public_profiles!reviews_user_id_fkey(username, display_name)")
     .eq("product_id", product.id)
     .order("created_at", { ascending: false })
     .limit(20);
@@ -186,9 +186,9 @@ export default async function ProductPage({ params }: Params) {
             verified: r.is_verified_download,
             created_at: r.created_at,
             author:
-              (r.profiles as unknown as { display_name: string | null; username: string } | null)
+              (r.public_profiles as unknown as { display_name: string | null; username: string } | null)
                 ?.display_name ??
-              (r.profiles as unknown as { username: string } | null)?.username ??
+              (r.public_profiles as unknown as { username: string } | null)?.username ??
               "User"
           }))}
         />
