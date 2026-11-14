@@ -488,22 +488,25 @@ insert into storage.buckets (id, name, public) values
 on conflict (id) do nothing;
 
 -- Media uploads: only into a folder named after a product the caller owns
+create policy media_read_public on storage.objects for select
+  using (bucket_id in ('product-icons', 'product-media'));
+
 create policy media_upload_owner on storage.objects for insert
   with check (
     bucket_id in ('product-icons', 'product-media')
     and exists (select 1 from products p
-                where p.id::text = (storage.foldername(name))[1]
+                where p.id::text = (storage.foldername(objects.name))[1]
                   and p.developer_id = auth.uid())
   );
 create policy media_update_owner on storage.objects for update
   using (bucket_id in ('product-icons', 'product-media')
     and exists (select 1 from products p
-                where p.id::text = (storage.foldername(name))[1]
+                where p.id::text = (storage.foldername(objects.name))[1]
                   and p.developer_id = auth.uid()));
 create policy media_delete_owner on storage.objects for delete
   using (bucket_id in ('product-icons', 'product-media')
     and exists (select 1 from products p
-                where p.id::text = (storage.foldername(name))[1]
+                where p.id::text = (storage.foldername(objects.name))[1]
                   and p.developer_id = auth.uid()));
 
 -- Private product files: developer uploads own; downloads go through
@@ -512,21 +515,21 @@ create policy files_upload_owner on storage.objects for insert
   with check (
     bucket_id = 'product-files'
     and exists (select 1 from products p
-                where p.id::text = (storage.foldername(name))[1]
+                where p.id::text = (storage.foldername(objects.name))[1]
                   and p.developer_id = auth.uid())
   );
 create policy files_read_owner_admin on storage.objects for select
   using (bucket_id = 'product-files'
     and (exists (select 1 from products p
-                 where p.id::text = (storage.foldername(name))[1]
+                 where p.id::text = (storage.foldername(objects.name))[1]
                    and p.developer_id = auth.uid())
          or is_admin(auth.uid())));
 
 create policy avatars_public_read on storage.objects for select using (bucket_id = 'avatars');
 create policy avatars_own_write on storage.objects for insert
-  with check (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+  with check (bucket_id = 'avatars' and (storage.foldername(objects.name))[1] = auth.uid()::text);
 create policy avatars_own_update on storage.objects for update
-  using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+  using (bucket_id = 'avatars' and (storage.foldername(objects.name))[1] = auth.uid()::text);
 
 -- ============================================================================
 -- Seed the spec's category set

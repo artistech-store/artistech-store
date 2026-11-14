@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
+import { HeaderAuth } from "./header-auth";
 
 export function SiteHeader() {
   return (
@@ -22,9 +23,7 @@ export function SiteHeader() {
 
         <div className="header-actions">
           <ThemeToggle />
-          <Link className="btn btn-ghost" href="/sign-in">
-            Sign In
-          </Link>
+          <HeaderAuth />
           <Link className="btn btn-gold" href="/publish">
             Publish
           </Link>
