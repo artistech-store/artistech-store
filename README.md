@@ -75,3 +75,7 @@ data-driven section showing its honest empty state. Nothing is mocked.
 - Rating/download counters are maintained by database triggers, never
   trusted from clients.
 - Administrative actions are recorded in `audit_logs`.
+
+## Live deployment
+
+Production: https://artistech-store.onrender.com (Render, Singapore) with Supabase (Mumbai). Pushes to `main` auto-deploy via the Render deploy hook.
