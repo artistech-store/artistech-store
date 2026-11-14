@@ -37,7 +37,7 @@ export default async function AdminPage() {
     );
   }
 
-  const [pending, reports, users, categories, audit] = await Promise.all([
+  const [pending, reports, users, categories, audit, ads] = await Promise.all([
     supabase
       .from("products")
       .select("id, slug, name, kind, status, created_at, developer:developer_profiles(display_name)")
@@ -50,7 +50,12 @@ export default async function AdminPage() {
       .order("created_at"),
     supabase.from("profiles").select("id, username, display_name, role, is_suspended, created_at").order("created_at", { ascending: false }).limit(50),
     supabase.from("product_categories").select("id, slug, name, position").order("position"),
-    supabase.from("audit_logs").select("id, action, entity_type, entity_id, created_at").order("created_at", { ascending: false }).limit(30)
+    supabase.from("audit_logs").select("id, action, entity_type, entity_id, created_at").order("created_at", { ascending: false }).limit(30),
+    supabase
+      .from("advertisements")
+      .select("id, placement, status, impressions, clicks, product:products(name), campaign:sponsored_campaigns(name, budget_inr, starts_at, ends_at)")
+      .order("created_at", { ascending: false })
+      .limit(50)
   ]);
 
   return (
@@ -75,6 +80,18 @@ export default async function AdminPage() {
         users={users.data ?? []}
         categories={categories.data ?? []}
         audit={audit.data ?? []}
+        ads={(ads.data ?? []).map((a) => ({
+          id: a.id,
+          placement: a.placement,
+          status: a.status,
+          impressions: a.impressions,
+          clicks: a.clicks,
+          product: (a.product as unknown as { name: string } | null)?.name ?? "(product removed)",
+          campaign: (a.campaign as unknown as { name: string; budget_inr: number; starts_at: string; ends_at: string } | null)?.name ?? "?",
+          budget: (a.campaign as unknown as { budget_inr: number } | null)?.budget_inr ?? 0,
+          starts_at: (a.campaign as unknown as { starts_at: string } | null)?.starts_at ?? "",
+          ends_at: (a.campaign as unknown as { ends_at: string } | null)?.ends_at ?? ""
+        }))}
       />
     </div>
   );

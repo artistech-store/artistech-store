@@ -21,17 +21,22 @@ interface CategoryRow {
 interface AuditRow {
   id: number; action: string; entity_type: string; entity_id: string | null; created_at: string;
 }
+interface AdRow {
+  id: string; placement: string; status: string; impressions: number; clicks: number;
+  product: string; campaign: string; budget: number; starts_at: string; ends_at: string;
+}
 
-const TABS = ["Moderation", "Reports", "Users", "Categories", "Audit log"];
+const TABS = ["Moderation", "Reports", "Users", "Ads", "Categories", "Audit log"];
 
 export function AdminPanel({
-  pending, reports, users, categories, audit
+  pending, reports, users, categories, audit, ads
 }: {
   pending: PendingProduct[];
   reports: Report[];
   users: UserRow[];
   categories: CategoryRow[];
   audit: AuditRow[];
+  ads: AdRow[];
 }) {
   const router = useRouter();
   const [tab, setTab] = useState(0);
@@ -123,6 +128,18 @@ export function AdminPanel({
       setNewCat("");
       await supabase.rpc("write_audit", {
         action: "category.create", entity_type: "category", entity_id: slug, metadata: { name }
+      });
+    });
+  }
+
+  async function setAdStatus(a: AdRow, status: "active" | "rejected" | "paused") {
+    await act(a.id + status, async () => {
+      const supabase = createClient();
+      const { error } = await supabase.from("advertisements").update({ status }).eq("id", a.id);
+      if (error) throw error;
+      await supabase.rpc("write_audit", {
+        action: "ad." + status, entity_type: "advertisement", entity_id: a.id,
+        metadata: { product: a.product, campaign: a.campaign }
       });
     });
   }
@@ -221,6 +238,36 @@ export function AdminPanel({
 
       {tab === 3 && (
         <div className="stack" style={{ gap: 10 }}>
+          {ads.length === 0 ? (
+            <div className="empty-state"><strong>No sponsorships yet</strong><p>Developer sponsorship requests appear here for review.</p></div>
+          ) : ads.map((a) => (
+            <div key={a.id} style={{ ...card, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+              <div style={{ flex: 1, minWidth: 200 }}>
+                <strong>{a.product}</strong>
+                <span style={{ color: "var(--text-faint)", fontSize: "0.82rem" }}>
+                  {" \u00b7 "}{a.campaign}{" \u00b7 "}{a.placement} placement{" \u00b7 "}{a.status}{" \u00b7 "}Rs {a.budget}{" \u00b7 "}
+                  {a.impressions} views / {a.clicks} clicks
+                </span>
+              </div>
+              {a.status === "pending_approval" && (
+                <span style={{ display: "flex", gap: 8 }}>
+                  <button className="btn btn-gold" disabled={busy !== null} onClick={() => setAdStatus(a, "active")}>Approve</button>
+                  <button className="btn btn-ghost" style={{ color: "var(--danger)" }} disabled={busy !== null} onClick={() => setAdStatus(a, "rejected")}>Reject</button>
+                </span>
+              )}
+              {a.status === "active" && (
+                <button className="btn btn-ghost" disabled={busy !== null} onClick={() => setAdStatus(a, "paused")}>Pause</button>
+              )}
+              {a.status === "paused" && (
+                <button className="btn btn-gold" disabled={busy !== null} onClick={() => setAdStatus(a, "active")}>Resume</button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {tab === 4 && (
+        <div className="stack" style={{ gap: 10 }}>
           <div style={{ display: "flex", gap: 8 }}>
             <input value={newCat} onChange={(e) => setNewCat(e.target.value)} placeholder="New category name"
               aria-label="New category name"
@@ -236,7 +283,7 @@ export function AdminPanel({
         </div>
       )}
 
-      {tab === 4 && (
+      {tab === 5 && (
         <div className="stack" style={{ gap: 6 }}>
           {audit.length === 0 ? (
             <div className="empty-state"><strong>No admin actions yet</strong><p>Every sensitive administrative action is recorded here.</p></div>

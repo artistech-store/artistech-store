@@ -136,6 +136,33 @@ export async function getCategories(): Promise<{
   return { configured: true, categories: (data ?? []) as ProductCategory[] };
 }
 
+export interface SponsoredItem {
+  adId: string;
+  productId: string;
+  slug: string;
+  name: string;
+  tagline: string | null;
+  iconUrl: string | null;
+  developerName: string;
+}
+
+/** Live sponsored placements for a slot ("home" | "category" | "search"). */
+export async function getSponsored(placement: string): Promise<SponsoredItem[]> {
+  if (!isSupabaseConfigured()) return [];
+  const supabase = createClient();
+  const { data, error } = await supabase.rpc("get_live_ads", { p_placement: placement });
+  if (error || !data) return [];
+  return (data as Record<string, unknown>[]).map((r) => ({
+    adId: String(r.ad_id),
+    productId: String(r.product_id),
+    slug: String(r.slug),
+    name: String(r.name),
+    tagline: (r.tagline as string) ?? null,
+    iconUrl: (r.icon_url as string) ?? null,
+    developerName: String(r.developer_name)
+  }));
+}
+
 export async function getHomeData(): Promise<HomeData> {
   const empty: HomeData = {
     configured: isSupabaseConfigured(),

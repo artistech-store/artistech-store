@@ -74,6 +74,7 @@ export default async function DeveloperDashboardPage() {
             Developer {dev.verified && "\u00b7 Verified \u2713"}
           </p>
         </div>
+        <Link className="btn btn-ghost" href="/dashboard/developer/sponsorships">Sponsorships</Link>
         <Link className="btn btn-gold" href="/publish/new">Publish new product</Link>
       </header>
 

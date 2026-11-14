@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { getHomeData } from "@/lib/data";
+import { getHomeData, getSponsored } from "@/lib/data";
 import { ProductCard } from "@/components/product-card";
 import { EmptyState } from "@/components/empty-state";
+import { SponsoredCard } from "@/components/sponsored-card";
 import type { ProductSummary } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -41,7 +42,7 @@ function Section({
 }
 
 export default async function HomePage() {
-  const data = await getHomeData();
+  const [data, sponsored] = await Promise.all([getHomeData(), getSponsored("home")]);
 
   return (
     <>
@@ -70,6 +71,19 @@ export default async function HomePage() {
             title="Store database not connected yet"
             body="This deployment is waiting on its Supabase credentials (see .env.example). Once connected, every section below shows live records - nothing here is hardcoded."
           />
+        </section>
+      )}
+
+      {sponsored.length > 0 && (
+        <section className="section" aria-label="Sponsored">
+          <div className="section-head">
+            <h2 className="section-title">Sponsored</h2>
+          </div>
+          <div className="card-grid">
+            {sponsored.map((s) => (
+              <SponsoredCard key={s.adId} item={s} />
+            ))}
+          </div>
         </section>
       )}
 
